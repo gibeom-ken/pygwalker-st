@@ -4,42 +4,30 @@ import pandas as pd
 import pygwalker as pyg 
 
 # Page Configuration
-st.set_page_config(page_title="StWalker App",layout="wide")
-
-
-st.header("Hello ")
+st.set_page_config(page_title="API데이터솔루션 EDA",layout="wide")
 
 # Load Data Fxn
 def load_data(data):
-    return pd.read_csv(data)
+    return pd.read_excel(data)
 
 def main():
-    st.title("Streamlit PyGWalker App")
+    st.title("API데이터솔션으로 대시보드 만들기")
 
-    menu = ["Home", "About"]
-    choice = st.sidebar.selectbox("Menu", menu)
+    st.subheader("스스센 통계에서 다운받은 파일을 업로드해주세요.")
+    # Form
+    with st.form("upload_form"):
+        data_file = st.file_uploader("엑셀 파일만 업로드해주세요!") #,type=["xlsx","txt"]
+        submitted = st.form_submit_button("Submit")
 
-    if choice == "Home":
-        st.subheader("Home")
-        # Form
-        with st.form("upload_form"):
-            data_file = st.file_uploader("Upload a CSV File",type=["csv","txt"])
-            submitted = st.form_submit_button("Submit")
+    if submitted:
+        df = load_data(data_file)
+        # Visualize
+        pyg_html = pyg.walk(df,return_html=True)
+        # Render with components
+        stc.html(pyg_html,scrolling=True,height=1000)
 
-        if submitted:
-            df = load_data(data_file)
-            st.dataframe(df)
-            # Visualize
-            pyg_html = pyg.walk(df,return_html=True)
-            # Render with component
-            stc.html(pyg_html,scrolling=True,height=1000)
-
-        
-        
     
-    else:
-        st.subheader("About")
-
+        
     
 if __name__ == "__main__":
     main()
